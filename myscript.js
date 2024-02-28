@@ -7,8 +7,9 @@ async function scrapeFIFAWorldCupYears() {
 
   // Wait for the table to load
   await page.waitForSelector(".wikitable");
-
-  // Extract data from the table
+  page.on("response", async (response) => {
+    console.log(response);
+  }); // Extract data from the table
   const yearsWithData = await page.evaluate(() => {
     const rows = Array.from(
       document.querySelectorAll(
@@ -19,12 +20,9 @@ async function scrapeFIFAWorldCupYears() {
 
     for (const row of rows) {
       const yearAnchor = row.querySelector("td:nth-child(1) a");
-      console.log("yearAnchor", yearAnchor);
       if (yearAnchor) {
         const year = yearAnchor.getAttribute("title").match(/\d{4}/)[0];
-        console.log("year", year);
         const dateElement = row.querySelector("td:nth-child(5)");
-        console.log("dateElement", dateElement);
         const date = dateElement
           ? dateElement.textContent.trim()
           : "Date not available";
